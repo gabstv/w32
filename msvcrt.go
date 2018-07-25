@@ -1,5 +1,3 @@
-// +build windows
-
 package w32
 
 import "syscall"
