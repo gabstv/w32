@@ -16,6 +16,7 @@ var (
 	modkernel32                    = syscall.NewLazyDLL("kernel32.dll")
 	procCopyMemory                 = modkernel32.NewProc("RtlCopyMemory")
 	procCloseHandle                = modkernel32.NewProc("CloseHandle")
+	procCreateMutexW               = modkernel32.NewProc("CreateMutexW")
 	procCreateProcessA             = modkernel32.NewProc("CreateProcessA")
 	procCreateProcessW             = modkernel32.NewProc("CreateProcessW")
 	procCreateRemoteThread         = modkernel32.NewProc("CreateRemoteThread")
@@ -186,6 +187,21 @@ func VirtualProtect(lpAddress uintptr, dwSize int, flNewProtect int, lpflOldProt
 		uintptr(flNewProtect),
 		uintptr(unsafe.Pointer(lpflOldProtect)))
 	return ret != 0
+}
+
+// CreateMutexW creates or opens a named or unnamed mutex object.
+// https://docs.microsoft.com/en-us/windows/desktop/api/synchapi/nf-synchapi-createmutexw
+func CreateMutexW(name string) (handle HANDLE, err error) {
+	ret, _, err := procCreateMutexW.Call(
+		0,
+		0,
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))),
+	)
+	if err != nil && IsErrSuccess(err) {
+		err = nil
+	}
+	handle = HANDLE(ret)
+	return
 }
 
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx
