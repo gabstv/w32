@@ -29,7 +29,7 @@ func SeDebugPrivilege() error {
 	// enable SeDebugPrivilege https://github.com/midstar/proci/blob/6ec79f57b90ba3d9efa2a7b16ef9c9369d4be875/proci_windows.go#L80-L119
 	handle, err := syscall.GetCurrentProcess()
 	if err != nil {
-		return
+		return err
 	}
 
 	var token syscall.Token
