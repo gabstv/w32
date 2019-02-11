@@ -6,8 +6,8 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/gabstv/w32"
 	"github.com/pkg/errors"
-
 	"golang.org/x/sys/windows"
 )
 
@@ -59,6 +59,9 @@ func SeDebugPrivilege() error {
 		0,
 		0)
 	if int(ret) == 0 {
+		return nil
+	}
+	if err != nil && w32.IsErrSuccess(err) {
 		return nil
 	}
 	return err
