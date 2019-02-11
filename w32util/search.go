@@ -1,3 +1,5 @@
+// +build windows
+
 package w32util
 
 import (
@@ -6,6 +8,7 @@ import (
 	"unsafe"
 
 	"github.com/gabstv/w32"
+	"github.com/pkg/errors"
 )
 
 const MEM_IMAGE w32.DWORD = 0x1000000
@@ -17,7 +20,7 @@ const MEM_PRIVATE w32.DWORD = 0x20000
 func SearchMemory(processID, minAddr, maxAddr uint32, maxResults int, exp *regexp.Regexp) ([][]byte, error) {
 	phandle, err := w32.OpenProcess(w32.PROCESS_VM_READ|w32.PROCESS_QUERY_INFORMATION, false, processID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "w32.OpenProcess")
 	}
 	defer w32.CloseHandle(phandle)
 	systemInfo := &w32.SYSTEM_INFO{}
